@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_white_256dp"
+        android:title="@string/menuItem_search"
+        android:orderInCategory="0"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_backHome"
+        android:icon="@drawable/ic_store_white_256dp"
+        android:orderInCategory="1"
+        android:title="@string/menuItem_home"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_cart_createOrder"
+        android:icon="@drawable/ic_shopping_basket_white_256dp"
+        android:orderInCategory="2"
+        android:title="@string/menuItem_createOrder"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_cart_clear"
+        android:icon="@drawable/ic_remove_shopping_cart_white_256dp"
+        android:orderInCategory="3"
+        android:title="@string/menuItem_clearAll"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menu_camera"
+        android:icon="@drawable/ic_photo_camera_white_256dp"
+        android:orderInCategory="4"
+        android:title="@string/menuItem_scan_qr_code"
+        app:showAsAction="ifRoom" />
+
+</menu>

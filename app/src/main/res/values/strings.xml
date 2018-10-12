@@ -1,0 +1,158 @@
+    <resources>
+    <string name="app_name">Q.Store</string>
+
+    <string name="title_order_list">List</string>
+    <string name="title_order_finish">Finished</string>
+    <string name="title_order_analysis">Analysis</string>
+    <string name="title_more">More</string>
+
+    <string name="tab1">RECOMMEND</string>
+    <string name="tab2">ORDER</string>
+    <string name="tab3">CART</string>
+    <string name="tab4">PLEASE LOGIN</string>
+
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="search">search</string>
+
+    <string name="store_name">Store Name</string>
+    <string name="branch">Branch</string>
+    <string name="now">Now No.</string>
+    <string name="wait_number">23</string>
+    <string name="about">About</string>
+    <string name="minute_number">60</string>
+    <string name="minute">Minute</string>
+    <string name="introduction">Introduction</string>
+
+    <string name="locationManager">Location Manager</string>
+    <string name="locationMessage">GPS目前尚未啟用\n請問是否現在設定啟用GPS?</string>
+    <string name="setPositiveButton">On</string>
+    <string name="setNegativeButton">不啟用</string>
+
+    <string name="label_loading">This Is Empty View</string>
+    <string name="label_interval">Interval: </string>
+    <string name="label_indicator_size">Indicator size: </string>
+    <string name="label_animate_indicators">Animate indicators: </string>
+    <string name="label_hide_indicators">Hide Indicators</string>
+    <string name="label_loop_slides">Loop slides: </string>
+
+    <array name="page_indicators">
+        <item>號碼牌</item>
+        <item>訂單</item>
+        <item>購物車</item>
+        <item>更多...</item>
+    </array>
+
+    <string name="server">https://flashmage.000webhostapp.com/</string>
+    <string name="select">query.php</string>
+    <string name="insert">insert.php</string>
+    <string name="delete">delete.php</string>
+    <string name="update">update.php</string>
+
+    <string name="add_record">新增</string>
+    <string name="update_record">更新</string>
+    <string name="delete_record">刪除</string>
+    <string name="refresh_record">刷新</string>
+    <string name="phpSQLNumLimit">n</string>
+    <string name="phpSQLNumDefault">10</string>
+    <string name="phpSQLFunction">w</string>
+    <string name="phpSQLtoJSON">json</string>
+    <string name="phpSQLPwdFunction">p</string>
+    <string name="phpSQLstoreList">storeList</string>
+    <string name="phpSQLuserList">"userList"</string>
+    <string name="phpSQLShowColumns">"cv"</string>
+    <string name="phpSQLuserSearchByEMAIL">"userSearchByEMAIL"</string>
+    <string name="phpSQLstoreSearchByName">storeSearchByName</string>
+    <string name="phpSQLstoreProductList">storeProductList</string>
+    <string name="phpSQLdelOrder">delOrder</string>
+    <string name="phpSQLnewOrderSub">newOrderSub</string>
+    <string name="phpSQLsetOrderSub">setOrderSub</string>
+    <string name="phpSQLdelOrderSub">delOrderSub</string>
+
+    <!--phpSQLnewOrderSub-->
+    <!--phpSQLnewOrderSub-->
+    <string name="phpSQLSearch1">s</string>
+    <string name="phpSQLSearch2">s2</string>
+    <string name="phpSQLSearch3">s3</string>
+    <string name="phpSQLSearch4">s4</string>
+    <string name="phpSQLSearch5">s5</string>
+    <string name="phpSQLSearch6">s6</string>
+    <string name="phpSQLSearch7">s7</string>
+    <string name="phpSQLSearch8">s8</string>
+    <string name="phpSQLSearch9">s9</string>
+    <string name="phpSQLSearch10">s10</string>
+    <string name="phpSQLSearch11">s11</string>
+    <string name="phpSQLSearch12">s12</string>
+    <string name="phpSQLSearch13">s13</string>
+    <string name="phpSQLSearch14">s14</string>
+    <string name="phpSQLSearch15">s15</string>
+    <string name="phpSQLPwd">pass</string>
+    <string name="phpSQLLat">lat</string>
+    <string name="phpSQLLng">lng</string>
+    <string name="phpSQLLatDefault">25.04.49.55</string>
+    <string name="phpSQLLngDefault">121.33.55.79</string>
+
+    <string name="title_activity_pay_select">選擇支付方式</string>
+    <string name="title_activity_googlemap">餐廳位置查詢"</string>
+
+    <string name="phpSQLorderList">orderList</string>
+    <string name="phpSQLsetOrderUpdate">setOrderUpdate</string>
+    <string name="phpSQLgetOrderNewId">getOrderNewId</string>
+    <string name="phpSQLorderMSList">orderMSList</string>
+
+    <string name="menu_app_name">NumberQ_Menu</string>
+    <string name="menu_no_record">No record!</string>
+    <string name="menu_dessert1">清脆的豆芽菜，配上軟潤香滑的冬粉、海帶與豆乾絲，口感層次豐富爽口，讓您吃出猶如夏天的滋味。</string>
+    <string name="menu_dessert2">風味道地的乾煸四季豆，以蝦米與辣椒肉末拌炒，同時能嚐到四季豆的鮮甜與乾煸香氣，滋味爽脆鹹香，讓您一口接一口，不捨放下筷子。</string>
+    <string name="menu_dessert3">上海口味的炸排骨，以獨特醬汁醃製入味，不沾粉的寧式作法，炸至表層金黃，外酥內嫩的口感，值得一試!</string>
+    <string name="menu_NT">NT $</string>
+    <string name="menu_waitNum">店家目前等待人數:</string>
+    <string name="menu_waitTime">預計取餐時間:</string>
+    <string name="menu_cartInfo">確定要放入購物車嗎?</string>
+    <string name="menu_confirm">確定</string>
+    <string name="menu_cancel">取消</string>
+    <string name="menu_cartHas">您的購物車內已有</string>
+    <string name="menu_an">筆</string>
+    <string name="menu_addAnother">的清單囉，再新增一筆嗎?</string>
+    <string name="menu_added">已加入購物車</string>
+    <string name="menu_added_cancel">取消</string>
+    <string name="menu_added_canceled">已取消</string>
+    <string name="menu_quantity">數量:</string>
+    <string name="menu_singlePrice">單價:</string>
+    <string name="menu_totalPrice">總價:</string>
+    <string name="menu_putInCart">放入購物車</string>
+    <string name="menu_backToCart">回到購物車</string>
+
+    <string name="cart_click">長按即可修改菜單</string>
+    <string name="cart_modify">修改內容</string>
+    <string name="cart_deleteMenu">刪除菜單</string>
+    <string name="cart_modifyQuantity">修改數量</string>
+    <string name="cart_isEmpty">您的購物車內沒有商品</string>
+    <string name="cart_clearCart">確定要清除購物車內的商品嗎?</string>
+
+    <string name="menuItem_search">Search</string>
+    <string name="menuItem_home">回到首頁</string>
+    <string name="menuItem_clearAll">清除購物車</string>
+    <string name="menuItem_createOrder">結帳</string>
+    <string name="menuItem_scan_qr_code">Scan QR Code</string>
+
+    <string name="checkOut_title">我的訂單內容</string>
+    <string name="checkOut_use">使用</string>
+    <string name="checkOut_check">結帳</string>
+    <string name="checkOut_click">長按即可修改訂單</string>
+    <string name="checkOut_delete">刪除這筆訂單</string>
+
+    <string name="connFail_noConn">目前無法連線</string>
+    <string name="connFail_check">請檢查您的網路設定，謝謝您</string>
+    <string name="connFail_retry">再試一下</string>
+    <string name="connFail_quit">離開</string>
+
+    <string name="dialog_loading">Loading</string>
+    <string name="dialog_searchTitle">搜尋店家</string>
+    <string name="dialog_searchMessage">請輸入店家名稱</string>
+
+    <string name="login">LOGIN</string>
+    <string name="not_login">You Are Not Login</string>
+    <string name="my_file">MY FILE</string>
+</resources>

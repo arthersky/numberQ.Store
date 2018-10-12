@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Q.Store</string>
+    <string name="title_order_list">訂單</string>
+    <string name="title_order_finish">完成</string>
+    <string name="title_order_analysis">分析</string>
+    <string name="title_more">更多</string>
+    <string name="search">搜尋</string>
+    <string name="login">登入</string>
+    <string name="not_login">您尚未登入</string>
+    <string name="my_file">我的檔案</string>
+</resources>

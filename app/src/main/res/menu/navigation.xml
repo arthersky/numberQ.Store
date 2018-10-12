@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_order_list"
+        android:icon="@drawable/ic_assignment_black_256dp"
+        android:title="@string/title_order_list" />
+
+    <item
+        android:id="@+id/navigation_order_finish"
+        android:icon="@drawable/ic_assignment_turned_in_black_256dp"
+        android:title="@string/title_order_finish" />
+
+    <item
+        android:id="@+id/navigation_order_analysis"
+        android:icon="@drawable/ic_assessment_black_256dp"
+        android:title="@string/title_order_analysis" />
+    <item
+        android:id="@+id/navigation_more"
+        android:icon="@drawable/ic_apps_black_256dp"
+        android:title="@string/title_more" />
+
+</menu>
