@@ -1,5 +1,6 @@
 package langotec.numberq.store;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,6 +12,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.journeyapps.barcodescanner.CaptureActivity;
+
 import java.util.ArrayList;
 
 import langotec.numberq.store.R;
@@ -20,11 +25,13 @@ import langotec.numberq.store.fragment.MoreFragment;
 import langotec.numberq.store.fragment.OrderAnalysisFragment;
 import langotec.numberq.store.fragment.OrderFinishFragment;
 import langotec.numberq.store.fragment.OrderListFragment;
+import langotec.numberq.store.menu.MainOrder;
 import langotec.numberq.store.menu.Order;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ArrayList orderList;
+    public static ArrayList<MainOrder> orderList;
+    public static String QRCode;
 
     private ViewPager viewPager;
     private BottomNavigationView bottomNavigationView;
@@ -45,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
         if (orderList == null){
             try{
                 orderList = new ArrayList<>();
-                orderList = (ArrayList) getIntent().getSerializableExtra("orderList");
-                Log.e("data","orderList 1:"+orderList.get(0).toString());
+                orderList = (ArrayList<MainOrder>) getIntent().getSerializableExtra("orderList");
+                if(orderList.size()>0){
+                    Log.e("data","orderList 1:"+orderList.get(0).toString());
+                }else {
+                    Log.e("data","orderList data size:"+orderList.size());
+                }
             }catch (Exception e){
                 Log.e("dataErr",e.toString());
             }
@@ -57,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         setupView();
-//        viewPager.setCurrentItem(getIntent().getExtras("currentPage", 0));
+        viewPager.setCurrentItem(getIntent().getIntExtra("currentPage", 0));
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putInt("currentPage",viewPager.getCurrentItem());
+        super.onSaveInstanceState(outState);
+
     }
 
     @Override
@@ -86,10 +98,33 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.menu_camera:
+                IntentIntegrator integrator = new IntentIntegrator(this);
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                integrator.setPrompt("Scan");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(true);
+                integrator.setOrientationLocked(false);
+                integrator.setBarcodeImageEnabled(false);
+                integrator.initiateScan();
                 Toast.makeText(this, "Scan QR Code", Toast.LENGTH_SHORT).show();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if (result!= null) {
+            if (result.getContents()==null) {
+                Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_SHORT).show();
+            } else {
+                QRCode = result.getContents();
+                Toast.makeText(this,QRCode,Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void setupView(){

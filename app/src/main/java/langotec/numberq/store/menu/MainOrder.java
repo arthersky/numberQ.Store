@@ -1,12 +1,12 @@
 package langotec.numberq.store.menu;
-import android.view.OrientationEventListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Order extends ArrayList<Menu> implements Serializable {
+public class MainOrder implements Serializable {
 
+    private String id;
     private String orderId;
     private String userId;
     private String HeadId;
@@ -21,9 +21,20 @@ public class Order extends ArrayList<Menu> implements Serializable {
     private String comment;
     private String userName;
     private Calendar orderDT;
+    private Calendar orderGetDT;
+    private String HeadName;
+    private String BranchName;
+    private int quantity;
+    private int sumprice;
+    private String productType;
+    private String productName;
+    private String image;
+    private int available;
+    private int waitingTime;
+    private String description;
 
-    public Order(){}
-    public Order(
+    public MainOrder(){}
+    public MainOrder(
             String orderId,
             String userId,
             String HeadId,
@@ -35,9 +46,20 @@ public class Order extends ArrayList<Menu> implements Serializable {
             String payWay,
             int payCheck,
             int totalPrice,
-            String comment/*,
-            String userName,
-            Calendar orderDT*/){
+            String comment,/*
+            String userName,*/
+            Calendar orderDT,
+            Calendar orderGetDT,
+            String HeadName,
+            String BranchName,
+            int quantity,
+            int sumprice,
+            String productType,
+            String productName,
+            String image,
+            int available,
+            int waitingTime,
+            String description){
         setOrderId(orderId);
         setUserId(userId);
         setHeadId(HeadId);
@@ -50,8 +72,19 @@ public class Order extends ArrayList<Menu> implements Serializable {
         setPayCheck(payCheck);
         setTotalPrice(totalPrice);
         setComment(comment);
-        setUserName(userName);
-        /*setOrderDT(orderDT);*/
+//        setUserName(userName);
+        setOrderDT(orderDT);
+        setOrderGetDT(orderGetDT);
+        setHeadName(HeadName);
+        setBranchName(BranchName);
+        setQuantity(quantity);
+        setSumprice(sumprice);
+        setProductName(productName);
+        setProductType(productType);
+        setImage(image);
+        setAvailable(available);
+        setWaitingTime(waitingTime);
+        setDescription(description);
     }
 
     public String getOrderId() {
@@ -179,6 +212,106 @@ public class Order extends ArrayList<Menu> implements Serializable {
 
     public void setOrderDT(Calendar orderDT) {
         this.orderDT = orderDT;
+//        Log.e("Calendar Parse","Calendar:"+orderDT.get(Calendar.SECOND));
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getPayCheck() {
+        return payCheck;
+    }
+
+    public Calendar getOrderGetDT() {
+        return orderGetDT;
+    }
+
+    public void setOrderGetDT(Calendar orderGetDT) {
+        this.orderGetDT = orderGetDT;
+    }
+
+    public String getHeadName() {
+        return HeadName;
+    }
+
+    public void setHeadName(String headName) {
+        HeadName = headName;
+    }
+
+    public String getBranchName() {
+        return BranchName;
+    }
+
+    public void setBranchName(String branchName) {
+        BranchName = branchName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getSumprice() {
+        return sumprice;
+    }
+
+    public void setSumprice(int sumprice) {
+        this.sumprice = sumprice;
+    }
+
+    public String getProductType() {
+        return productType;
+    }
+
+    public void setProductType(String productType) {
+        this.productType = productType;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public int getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(int available) {
+        this.available = available;
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

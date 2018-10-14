@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="langotec.numberq.store.fragment.OrderListFragment">
 
+    <TextView
+        android:id="@+id/text_no_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="您沒有訂單"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="@+id/order_list"
+        app:layout_constraintEnd_toEndOf="@+id/order_list"
+        app:layout_constraintStart_toStartOf="@+id/order_list"
+        app:layout_constraintTop_toTopOf="@+id/order_list" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/order_list"
         android:layout_width="0dp"
