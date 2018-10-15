@@ -1,8 +1,7 @@
-package langotec.numberq.client.service;
+package langotec.numberq.store.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;

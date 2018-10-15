@@ -1,7 +1,10 @@
 package langotec.numberq.store;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
@@ -16,7 +19,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 
 import langotec.numberq.store.R;
 import langotec.numberq.store.adapter.BottomNavigationViewHelper;
@@ -25,12 +30,13 @@ import langotec.numberq.store.fragment.MoreFragment;
 import langotec.numberq.store.fragment.OrderAnalysisFragment;
 import langotec.numberq.store.fragment.OrderFinishFragment;
 import langotec.numberq.store.fragment.OrderListFragment;
+import langotec.numberq.store.map.PhpDB;
 import langotec.numberq.store.menu.MainOrder;
 import langotec.numberq.store.menu.Order;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static ArrayList<MainOrder> orderList;
+    public static ArrayList<MainOrder> orderList= new ArrayList<>();
     public static String QRCode;
 
     private ViewPager viewPager;
@@ -43,25 +49,32 @@ public class MainActivity extends AppCompatActivity {
     private OrderAnalysisFragment orderAnalysisFragment;
     private MoreFragment moreFragment;
 
+    private static PhpDB db;
+    private static WeakReference<Context> weakReference;
+    public static int orderIndex, menuIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        weakReference = new WeakReference<>(getApplicationContext());
+
+        Log.e("data","orderList data size:"+orderList.size());
+
         //take data
-        if (orderList == null){
-            try{
-                orderList = new ArrayList<>();
-                orderList = (ArrayList<MainOrder>) getIntent().getSerializableExtra("orderList");
-                if(orderList.size()>0){
-                    Log.e("data","orderList 1:"+orderList.get(0).toString());
-                }else {
-                    Log.e("data","orderList data size:"+orderList.size());
-                }
-            }catch (Exception e){
-                Log.e("dataErr",e.toString());
-            }
-        }
+//        if (orderList == null){
+//            try{
+//                orderList = (ArrayList<MainOrder>) getIntent().getSerializableExtra("orderList");
+//                if(orderList.size()>0){
+//                    Log.e("data","orderList 1:"+orderList.get(0).toString());
+//                }else {
+//                    Log.e("data","orderList data size:"+orderList.size());
+//                }
+//            }catch (Exception e){
+//                Log.e("dataErr",e.toString());
+//            }
+//        }
     }
 
     @Override
@@ -120,6 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_SHORT).show();
             } else {
                 QRCode = result.getContents();
+//                db = new PhpDB(weakReference, new OrderHandler());
+//                db.getPairSet().setPairSearch(10, "1");
                 Toast.makeText(this,QRCode,Toast.LENGTH_SHORT).show();
             }
         } else {
@@ -195,4 +210,5 @@ public class MainActivity extends AppCompatActivity {
         Log.e("init","init finish");
 //        orderListFragment = (OrderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_order_list);
     }
+
 }

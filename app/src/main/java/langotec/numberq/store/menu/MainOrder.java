@@ -24,16 +24,26 @@ public class MainOrder implements Serializable {
     private Calendar orderGetDT;
     private String HeadName;
     private String BranchName;
-    private int quantity;
-    private int sumprice;
+//    private int quantity;
+//    private int sumprice;
     private String productType;
-    private String productName;
+//    private String productName;
     private String image;
     private int available;
     private int waitingTime;
     private String description;
 
-    public MainOrder(){}
+    private ArrayList<Menu> menuList;
+    private ArrayList<String> productName, quantity, sumprice;
+
+    public MainOrder(){
+
+            menuList = new ArrayList<>();
+            productName = new ArrayList<>();
+            quantity = new ArrayList<>();
+            sumprice = new ArrayList<>();
+
+    }
     public MainOrder(
             String orderId,
             String userId,
@@ -46,20 +56,21 @@ public class MainOrder implements Serializable {
             String payWay,
             int payCheck,
             int totalPrice,
-            String comment,/*
-            String userName,*/
+            String comment,
+            String userName,
             Calendar orderDT,
             Calendar orderGetDT,
             String HeadName,
             String BranchName,
-            int quantity,
-            int sumprice,
             String productType,
-            String productName,
             String image,
             int available,
             int waitingTime,
             String description){
+        menuList = new ArrayList<>();
+        productName = new ArrayList<>();
+        quantity = new ArrayList<>();
+        sumprice = new ArrayList<>();
         setOrderId(orderId);
         setUserId(userId);
         setHeadId(HeadId);
@@ -72,7 +83,7 @@ public class MainOrder implements Serializable {
         setPayCheck(payCheck);
         setTotalPrice(totalPrice);
         setComment(comment);
-//        setUserName(userName);
+        setUserName(userName);
         setOrderDT(orderDT);
         setOrderGetDT(orderGetDT);
         setHeadName(HeadName);
@@ -251,19 +262,35 @@ public class MainOrder implements Serializable {
         BranchName = branchName;
     }
 
-    public int getQuantity() {
+    public ArrayList<Menu> getMenuList() {
+        return menuList;
+    }
+
+    public void setMenuList(ArrayList<Menu> menuList) {
+        this.menuList = menuList;
+    }
+
+    public ArrayList<String> getProductName() {
+        return productName;
+    }
+
+    public void setProductName(ArrayList<String> productName) {
+        this.productName = productName;
+    }
+
+    public ArrayList<String> getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(ArrayList<String> quantity) {
         this.quantity = quantity;
     }
 
-    public int getSumprice() {
+    public ArrayList<String> getSumprice() {
         return sumprice;
     }
 
-    public void setSumprice(int sumprice) {
+    public void setSumprice(ArrayList<String> sumprice) {
         this.sumprice = sumprice;
     }
 
@@ -273,14 +300,6 @@ public class MainOrder implements Serializable {
 
     public void setProductType(String productType) {
         this.productType = productType;
-    }
-
-    public String getProductName() {
-        return productName;
-    }
-
-    public void setProductName(String productName) {
-        this.productName = productName;
     }
 
     public String getImage() {

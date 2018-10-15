@@ -51,13 +51,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             MainOrder mainOrder = (MainOrder) data.get(position);
 
             TextView orderDT = view.findViewById(R.id.order_orderDT);
-//            TextView orderUserName = view.findViewById(R.id.order_user_name);
+            TextView orderUserName = view.findViewById(R.id.order_user_name);
             TextView orderContactPhone = view.findViewById(R.id.order_contactPhone);
             TextView orderDeliveryType = view.findViewById(R.id.order_delivery_type);
             TextView orderTotalPrice = view.findViewById(R.id.order_totalPrice);
 
             orderDT.setText(mainOrder.getOrderDT().getTime().toString());
-//            orderUserName.setText("訂購者：" + mainOrder.getUserName());
+            orderUserName.setText("訂購者：" + mainOrder.getUserName());
             orderDeliveryType.setText("訂購模式：" + mainOrder.getDeliveryType());
             orderTotalPrice.setText("總金額：" + mainOrder.getTotalPrice());
             orderContactPhone.setText("電話：" + mainOrder.getContactPhone());

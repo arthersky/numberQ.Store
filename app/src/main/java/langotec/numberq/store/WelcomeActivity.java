@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,7 +29,8 @@ public class WelcomeActivity extends AppCompatActivity {
     private Context context;
     private PhpDB phpDB;
     private JSONArray ja;
-    private ArrayList<MainOrder> orderList = new ArrayList<>();
+    private ArrayList<MainOrder> orderList = MainActivity.orderList;
+    private static WeakReference<Context> weakReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         context = this;
 
+        weakReference = new WeakReference<>(context);
         getOrderData();
     }
 
@@ -52,6 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
                     Intent intent = new Intent();
                     intent.setClass(context, MainActivity.class);
                     intent.putExtra("orderList",orderList);
+                    Log.e("putExtra",""+orderList);
                     startActivity(intent);
                     finish();
                 } else {
@@ -70,7 +74,7 @@ public class WelcomeActivity extends AppCompatActivity {
 //        phpDB.getPairSet().setPairSearch(1,"o201810020003");
 //        Log.e("等待資料回應:", new Date().toString());
 //        new Thread(phpDB).start();
-        phpDB = new PhpDB(context, hd);
+        phpDB = new PhpDB(weakReference, new OrderHandler(weakReference));
         phpDB.getPairSet().setPairFunction("orderMSList");
         phpDB.getPairSet().setPairSearch(4, "2054");//第四個欄位,branchId
         phpDB.getPairSet().setPairJSON();
@@ -79,8 +83,13 @@ public class WelcomeActivity extends AppCompatActivity {
 
     }
 
-    protected Handler hd = new hdsub();
-    class hdsub extends Handler {
+    class OrderHandler extends Handler {
+        WeakReference weakReference;
+
+        OrderHandler(WeakReference weakReference) {
+            this.weakReference = weakReference;
+        }
+
         @Override
         public void handleMessage(Message msg) {
             Log.e("", "Handler 發送過來的訊息：" + msg.obj);
@@ -99,37 +108,53 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                 } else if (phpDB.isJSON()) {
                     ja = phpDB.getJSONData();
-                    if (ja.length()>0){
+
                         for (int i = 0; i < ja.length(); i++) {
+                            boolean flag = false;
                             try {
                                 JSONObject jsObj = ja.getJSONObject(i);
-                                String orderId = jsObj.getString("orderId");
-                                String userId = jsObj.getString("userId");
-                                String HeadId = jsObj.getString("HeadId");
-                                String BranchId = jsObj.getString("BranchId");
-                                String deliveryType = jsObj.getString("deliveryType");
-                                String contactPhone = jsObj.getString("contactPhone");
-                                String deliveryAddress = jsObj.getString("deliveryAddress");
-                                String taxId = jsObj.getString("taxId");
-                                String payWay = jsObj.getString("payWay");
-                                int payCheck = Integer.parseInt(jsObj.getString("payCheck"));
-                                int totalPrice = Integer.parseInt(jsObj.getString("totalPrice"));
-                                String comment = jsObj.getString("comment");
-//                            String userName = jsObj.getString("userName");
-                                String orderDT = jsObj.getString("orderDT");
-                                Calendar orderDTc = parseDate(orderDT);
-                                String orderGetDT = jsObj.getString("orderGetDT");
-                                Calendar orderGetDTc = parseDate(orderGetDT);
-                                String HeadName = jsObj.getString("HeadName");
-                                String BranchName = jsObj.getString("BranchName");
-                                int quantity = jsObj.optInt("quantity");
-                                int sumprice = jsObj.optInt("sumprice");
-                                String productType = jsObj.optString("productType");
+                                String orderId = jsObj.optString("orderId");
                                 String productName = jsObj.optString("productName");
+                                String quantity = jsObj.optString("quantity");
+                                String sumprice = jsObj.optString("sumPrice");
+                                String productType = jsObj.optString("productType");
                                 String image = jsObj.optString("image");
+
+                                for (int i2 = 0; i2 < orderList.size(); i2++){
+                                    MainOrder indexOrder = orderList.get(i2);
+                                    if (indexOrder.getOrderId().equals(orderId)){
+                                        indexOrder.getProductName().add(productName);
+                                        indexOrder.getQuantity().add(quantity);
+                                        indexOrder.getSumprice().add(sumprice);
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                                if (flag)
+                                    continue;
+
+                                String userId = jsObj.optString("userId");
+                                String HeadId = jsObj.optString("HeadId");
+                                String BranchId = jsObj.optString("BranchId");
+                                String deliveryType = jsObj.optString("deliveryType");
+                                String contactPhone = jsObj.optString("contactPhone");
+                                String deliveryAddress = jsObj.optString("deliveryAddress");
+                                String taxId = jsObj.optString("taxId");
+                                String payWay = jsObj.optString("payWay");
+                                int payCheck = Integer.parseInt(jsObj.optString("payCheck"));
+                                int totalPrice = Integer.parseInt(jsObj.optString("totalPrice"));
+                                String comment = jsObj.optString("comment");
+                                String userName = jsObj.optString("userName");
+                                String orderDT = jsObj.optString("orderDT");
+                                Calendar orderDTc = parseDate(orderDT);
+                                String orderGetDT = jsObj.optString("orderGetDT");
+                                Calendar orderGetDTc = parseDate(orderGetDT);
+                                String HeadName = jsObj.optString("HeadName");
+                                String BranchName = jsObj.optString("BranchName");
                                 int available = jsObj.optInt("available");
                                 int waitingTime = jsObj.optInt("waitingTime");
                                 String description = jsObj.optString("description");
+
                                 MainOrder mainOrder = new MainOrder(
                                         orderId,
                                         userId,
@@ -142,20 +167,20 @@ public class WelcomeActivity extends AppCompatActivity {
                                         payWay,
                                         payCheck,
                                         totalPrice,
-                                        comment,/*
-                                    String userName,*/
+                                        comment,
+                                        userName,
                                         orderDTc,
                                         orderGetDTc,
                                         HeadName,
                                         BranchName,
-                                        quantity,
-                                        sumprice,
                                         productType,
-                                        productName,
                                         image,
                                         available,
                                         waitingTime,
                                         description);
+                                mainOrder.getProductName().add(productName);
+                                mainOrder.getQuantity().add(quantity);
+                                mainOrder.getSumprice().add(sumprice);
                                 orderList.add(mainOrder);
                                 Log.e("JSON DATA", ja.get(i).toString());
                             } catch (JSONException e) {
@@ -163,7 +188,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             }
                         }
                         Log.e("orderlist","order List size:"+orderList.size());
-                    }
+
                 }
             }
             countDownTimer();

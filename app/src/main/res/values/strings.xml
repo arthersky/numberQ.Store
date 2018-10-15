@@ -112,9 +112,9 @@
     <string name="menu_cartInfo">確定要放入購物車嗎?</string>
     <string name="menu_confirm">確定</string>
     <string name="menu_cancel">取消</string>
-    <string name="menu_cartHas">您的購物車內已有</string>
-    <string name="menu_an">筆</string>
-    <string name="menu_addAnother">的清單囉，再新增一筆嗎?</string>
+    <string name="menu_cartHas">購物車內已有</string>
+    <string name="menu_an">筆同一間店家的</string>
+    <string name="menu_addAnother">囉，系統將會合併數量，確定嗎?</string>
     <string name="menu_added">已加入購物車</string>
     <string name="menu_added_cancel">取消</string>
     <string name="menu_added_canceled">已取消</string>
@@ -142,6 +142,12 @@
     <string name="checkOut_check">結帳</string>
     <string name="checkOut_click">長按即可修改訂單</string>
     <string name="checkOut_delete">刪除這筆訂單</string>
+    <string name="checkOut_dialog_title">確定要付款結帳嗎?</string>
+    <string name="checkOut_dialog_message">按下確定後即成立訂單囉</string>
+    <string name="checkOut_creatingOrders">訂單建立中…</string>
+    <string name="checkOut_createOrderSuccess">成功建立訂單</string>
+    <string name="checkOut_createOrderFailure">建立訂單失敗</string>
+    <string name="checkOut_createOrderRetry">系統未扣款，請重新結帳</string>
 
     <string name="connFail_noConn">目前無法連線</string>
     <string name="connFail_check">請檢查您的網路設定，謝謝您</string>
@@ -151,6 +157,19 @@
     <string name="dialog_loading">Loading</string>
     <string name="dialog_searchTitle">搜尋店家</string>
     <string name="dialog_searchMessage">請輸入店家名稱</string>
+
+    <string name="order_queryProcessing">資料查詢中…</string>
+    <string name="order_emptyOrders">您沒有已下訂商品</string>
+    <string name="order_icon_refresh">更新定單內容</string>
+    <array name="order_statusArray">
+        <item>未付費</item>
+        <item>已付款</item>
+        <item>製作中</item>
+        <item>可取餐</item>
+        <item>已取餐</item>
+    </array>
+    <string name="order_status">訂單目前狀態:</string>
+    <string name="order_finishTime">預計取餐時間:</string>
 
     <string name="login">LOGIN</string>
     <string name="not_login">You Are Not Login</string>
