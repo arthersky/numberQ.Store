@@ -17,22 +17,20 @@ import android.widget.Toast;
 
 import langotec.numberq.store.MainActivity;
 import langotec.numberq.store.R;
-import langotec.numberq.store.dbConnect.CustomerDBConn;
-import langotec.numberq.store.menu.CheckOutActivity;
+import langotec.numberq.store.WelcomeActivity;
+import langotec.numberq.store.dbConnect.UserDBConn;
+
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etEmail;
+    private EditText etUid;
     private EditText etPass;
-
-    private Button btnPassforget;
-    private Button btnReg;
     private Button btnLogin;
 
     private MyHandler handler;
     private Context context;
-    private CustomerDBConn user;
-    private String email, pwd, startFrom;
+    private UserDBConn user;
+    private String uid, pwd;
     private ProgressDialog loading;
 
     @Override
@@ -42,53 +40,28 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
         setLayout();
 
-        //如果是從CartFragment來的就必須跳轉回去
-        startFrom = getIntent().getStringExtra("startFrom");
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                email = etEmail.getText().toString();
+                uid = etUid.getText().toString();
                 pwd = etPass.getText().toString();
-                if(!isVaildEmailFormat(email)){
-                    Toast.makeText(context,"請輸入正確的e-mail", Toast.LENGTH_LONG).show();
+                if(uid.isEmpty() || pwd.isEmpty()){
+                    Toast.makeText(context,"未輸入帳號或密碼", Toast.LENGTH_LONG).show();
                 }else{
                     loading = ProgressDialog.show(context, "登入中","Loading...", false);
-                    user = CustomerDBConn.getInstance();
                     handler = new MyHandler();
-                    user.query(handler, getFilesDir(), email, pwd);
+                    user = new UserDBConn(handler, getFilesDir(), uid, null, null, null, pwd, UserDBConn.STATUS_LOGIN );
+                    user.start();
                 }
-
             }
         });
 
-        btnReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, AccRegiActivity.class);
-                startActivity(intent);
-
-            }
-
-        });
-
-        btnPassforget.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, SendPassActivity.class);
-                startActivity(intent);
-                //boolean isok = member.query(etEmail,etPass);
-
-            }
-        });
     }
 
     private void setLayout(){
-        etEmail=findViewById(R.id.etEmail);
-        etPass=findViewById(R.id.etPass);
-        btnPassforget=findViewById(R.id.btnPassforget);
-        btnReg=findViewById(R.id.btnReg);
-        btnLogin=findViewById(R.id.btnLogin);
+        etUid = findViewById(R.id.etUid);
+        etPass = findViewById(R.id.etPass);
+        btnLogin = findViewById(R.id.btnLogin);
     }
 
     private boolean isVaildEmailFormat(String email)
@@ -108,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.e("login.isOk", String.valueOf(isOk));
             Log.e("login.isConn", String.valueOf(isConn));
             loading.dismiss();
+            String tmpmsg=null;
             if (isConn) { //連線成功
                 if (isOk) { // 使用者已註冊
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -118,40 +92,38 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     dialogInterface.dismiss();
-                                    loginSuccessGoTo();
+                                    Intent intent = new Intent();
+                                    intent.setClass(context, WelcomeActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
                                 }
                             })
                             .create().show();
-
                 } else {  // 使用者未註冊
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle("登入")
-                            .setIcon(android.R.drawable.ic_dialog_info)
-                            .setMessage("登入失敗!\n請確認帳號或密碼是否正確。")
-                            .setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            })
-                            .create().show();
+                    tmpmsg="登入失敗!\n請確認帳號或密碼是否正確。";
+                    showdialog(tmpmsg);
                 }
             } else { // 連線失敗,未開啟網路
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("登入")
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setMessage("網路未連線!\n請確認您的網路連線狀態。")
-                        .setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .create().show();
+                tmpmsg="網路未連線!\n請確認您的網路連線狀態。";
+                showdialog(tmpmsg);
             }
         }
     }
 
+    private void showdialog(String src){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("登入")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setMessage("網路未連線!\n請確認您的網路連線狀態。")
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                })
+                .create().show();
+    }
+/*
     private void loginSuccessGoTo(){
         Intent intent = new Intent();
         if (startFrom != null && startFrom.equals("fromCartFragment")) {
@@ -165,4 +137,5 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+    */
 }

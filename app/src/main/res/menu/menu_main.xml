@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_256dp"
-        android:title="@string/menuItem_search"
+        android:title="@string/search"
         android:orderInCategory="0"
         app:showAsAction="ifRoom" />
 
@@ -32,10 +31,17 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/order_refresh"
+        android:icon="@drawable/ic_refresh_white_256dp"
+        android:orderInCategory="4"
+        android:title="@string/order_icon_refresh"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/menu_camera"
         android:icon="@drawable/ic_photo_camera_white_256dp"
-        android:orderInCategory="4"
-        android:title="@string/menuItem_scan_qr_code"
-        app:showAsAction="ifRoom" />
+        android:orderInCategory="5"
+        android:title="Scan"
+        app:showAsAction="ifRoom"/>
 
 </menu>

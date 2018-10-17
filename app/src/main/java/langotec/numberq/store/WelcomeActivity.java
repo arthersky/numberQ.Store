@@ -1,10 +1,12 @@
 package langotec.numberq.store;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,78 +15,75 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import langotec.numberq.store.dbConnect.parseJSON;
+import langotec.numberq.store.fragment.OrderListFragment;
 import langotec.numberq.store.login.LoginActivity;
 import langotec.numberq.store.login.Member;
 import langotec.numberq.store.map.PhpDB;
 import langotec.numberq.store.menu.MainOrder;
+import langotec.numberq.store.menu.OrderDetailActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private CountDownTimer timer;
     private Context context;
-    private PhpDB phpDB;
-    private JSONArray ja;
-    private ArrayList<MainOrder> orderList = new ArrayList<>();
+    private static WeakReference<Context> weakReference;
+    public static PhpDB phpDB;
+    public static JSONArray ja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
         context = this;
-
-        getOrderData();
+        weakReference = new WeakReference<>(context);
+        checkMember();
     }
 
-    private void countDownTimer() {
-        timer = new CountDownTimer(1000, 500) {
-            @Override
-            public void onTick(long l) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                if (Member.getInstance().checkLogin(context)) {
-                    Intent intent = new Intent();
-                    intent.setClass(context, MainActivity.class);
-                    intent.putExtra("orderList",orderList);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    Intent intent = new Intent();
-                    intent.setClass(context, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-            }
-        }.start();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        checkMember();
     }
 
-    private void getOrderData(){
-//        phpDB = new PhpDB(context,hd);
-//        phpDB.getPairSet().setPairFunction("orderList");
-//        phpDB.getPairSet().setPairSearch(1,"o201810020003");
-//        Log.e("等待資料回應:", new Date().toString());
-//        new Thread(phpDB).start();
-        phpDB = new PhpDB(context, hd);
+    private void checkMember(){
+        if (!Member.getInstance().checkLogin(context)) {
+            Intent intent = new Intent();
+            intent.setClass(context, LoginActivity.class);
+            ((Activity)context).startActivityForResult(intent, 1);
+        }else getOrderData("WelcomeActivity");
+    }
+
+    public static void getOrderData(String from){
+        MainActivity.orderList = new ArrayList<>();
+        Member member = findMemberFile();
+        phpDB = new PhpDB(weakReference, new OrderHandler(weakReference, from));
         phpDB.getPairSet().setPairFunction("orderMSList");
-        phpDB.getPairSet().setPairSearch(4, "2054");//第四個欄位,branchId
+        phpDB.getPairSet().setPairSearch(4, member.getBranchId());//第四個欄位,branchId
+        phpDB.getPairSet().setPairOkHTTP();
         phpDB.getPairSet().setPairJSON();
         Log.e("等待資料回應:", new Date().toString());
         new Thread(phpDB).start();
-
     }
 
-    protected Handler hd = new hdsub();
-    class hdsub extends Handler {
+    public static class OrderHandler extends Handler {
+        ArrayList<MainOrder> orderList = MainActivity.orderList;
+        Context context;
+        String from;
+        public OrderHandler(WeakReference weakReference, String from) {
+            context = (Context) weakReference.get();
+            this.from = from;
+        }
         @Override
         public void handleMessage(Message msg) {
             Log.e("", "Handler 發送過來的訊息：" + msg.obj);
-
             if (phpDB.getState()) {
                 Log.e("資料回應時間", new Date().toString());
                 Log.e("回應副程式", phpDB.getPairFunction());
@@ -93,43 +92,58 @@ public class WelcomeActivity extends AppCompatActivity {
                     for (int y = 0; y < phpDB.getRowSize(); y++) {
                         tmp = "";
                         for (Object key : ((PhpDB.ItemListRow) phpDB.getDataSet().get(y)).getAll().keySet()) {
-                            tmp = tmp + key.toString() + "=" + ((PhpDB.ItemListRow) phpDB.getDataSet().get(y)).get(key.toString()).toString() + "  ";
+                            tmp = tmp + key.toString() + "=" +
+                                    ((PhpDB.ItemListRow) phpDB.getDataSet().get(y)).get(key.toString()).toString() + "  ";
                         }
                         Log.e("=========Debug=======", tmp);
                     }
                 } else if (phpDB.isJSON()) {
                     ja = phpDB.getJSONData();
-                    if (ja.length()>0){
                         for (int i = 0; i < ja.length(); i++) {
+                            boolean flag = false;
                             try {
                                 JSONObject jsObj = ja.getJSONObject(i);
-                                String orderId = jsObj.getString("orderId");
-                                String userId = jsObj.getString("userId");
-                                String HeadId = jsObj.getString("HeadId");
-                                String BranchId = jsObj.getString("BranchId");
-                                String deliveryType = jsObj.getString("deliveryType");
-                                String contactPhone = jsObj.getString("contactPhone");
-                                String deliveryAddress = jsObj.getString("deliveryAddress");
-                                String taxId = jsObj.getString("taxId");
-                                String payWay = jsObj.getString("payWay");
-                                int payCheck = Integer.parseInt(jsObj.getString("payCheck"));
-                                int totalPrice = Integer.parseInt(jsObj.getString("totalPrice"));
-                                String comment = jsObj.getString("comment");
-//                            String userName = jsObj.getString("userName");
-                                String orderDT = jsObj.getString("orderDT");
-                                Calendar orderDTc = parseDate(orderDT);
-                                String orderGetDT = jsObj.getString("orderGetDT");
-                                Calendar orderGetDTc = parseDate(orderGetDT);
-                                String HeadName = jsObj.getString("HeadName");
-                                String BranchName = jsObj.getString("BranchName");
-                                int quantity = jsObj.optInt("quantity");
-                                int sumprice = jsObj.optInt("sumprice");
-                                String productType = jsObj.optString("productType");
+//                                Log.e("jsObj", jsObj.toString());
+                                String orderId = jsObj.optString("orderId");
                                 String productName = jsObj.optString("productName");
+                                String quantity = jsObj.optString("quantity");
+                                String sumprice = jsObj.optString("sumPrice");
+                                String productType = jsObj.optString("productType");
                                 String image = jsObj.optString("image");
+                                for (int i2 = 0; i2 < orderList.size(); i2++){
+                                    MainOrder indexOrder = orderList.get(i2);
+                                    if (indexOrder.getOrderId().equals(orderId)){
+                                        indexOrder.getProductName().add(productName);
+                                        indexOrder.getQuantity().add(quantity);
+                                        indexOrder.getSumprice().add(sumprice);
+                                        flag = true;
+                                        break;
+                                    }
+                                }
+                                if (flag)
+                                    continue;
+                                String userId = jsObj.optString("userId");
+                                String HeadId = jsObj.optString("HeadId");
+                                String BranchId = jsObj.optString("BranchId");
+                                String deliveryType = jsObj.optString("deliveryType");
+                                String contactPhone = jsObj.optString("contactPhone");
+                                String deliveryAddress = jsObj.optString("deliveryAddress");
+                                String taxId = jsObj.optString("taxId");
+                                String payWay = jsObj.optString("payWay");
+                                int payCheck = Integer.parseInt(jsObj.optString("payCheck"));
+                                int totalPrice = Integer.parseInt(jsObj.optString("totalPrice"));
+                                String comment = jsObj.optString("comment");
+                                String userName = jsObj.optString("userName");
+                                String orderDT = jsObj.optString("orderDT");
+                                Calendar orderDTc = parseDate(orderDT);
+                                String orderGetDT = jsObj.optString("orderGetDT");
+                                Calendar orderGetDTc = parseDate(orderGetDT);
+                                String HeadName = jsObj.optString("HeadName");
+                                String BranchName = jsObj.optString("BranchName");
                                 int available = jsObj.optInt("available");
                                 int waitingTime = jsObj.optInt("waitingTime");
                                 String description = jsObj.optString("description");
+
                                 MainOrder mainOrder = new MainOrder(
                                         orderId,
                                         userId,
@@ -142,48 +156,67 @@ public class WelcomeActivity extends AppCompatActivity {
                                         payWay,
                                         payCheck,
                                         totalPrice,
-                                        comment,/*
-                                    String userName,*/
+                                        comment,
+                                        userName,
                                         orderDTc,
                                         orderGetDTc,
                                         HeadName,
                                         BranchName,
-                                        quantity,
-                                        sumprice,
                                         productType,
-                                        productName,
                                         image,
                                         available,
                                         waitingTime,
                                         description);
+                                mainOrder.getProductName().add(productName);
+                                mainOrder.getQuantity().add(quantity);
+                                mainOrder.getSumprice().add(sumprice);
                                 orderList.add(mainOrder);
                                 Log.e("JSON DATA", ja.get(i).toString());
                             } catch (JSONException e) {
                                 Log.e("JSON ERROR", e.toString());
                             }
+                            Log.e("i, ja.length", i + ", " + ja.length());
+                            if (i + orderList.size() == ja.length()) {
+                                switch (from) {
+                                    case "WelcomeActivity":
+                                        Intent intent = new Intent();
+                                        intent.setClass(context, MainActivity.class);
+                                        context.startActivity(intent);
+                                        break;
+                                    case "OrderDetailActivity":
+                                        OrderDetailActivity.setLayout();
+                                        break;
+                                    case "OrderListFragment":
+                                        OrderListFragment.refreshOrder();
+                                        break;
+                                    case "MainActivity":
+                                        break;
+                                }
+                            }
+                            ((Activity) context).finish();
                         }
-                        Log.e("orderlist","order List size:"+orderList.size());
-                    }
+//                        Log.e("orderlist","order List size:"+ orderList.size());
                 }
             }
-            countDownTimer();
+            if (from.equals("WelcomeActivity") && !phpDB.isJSON()) {
+                Intent intent = new Intent();
+                intent.setClass(context, MainActivity.class);
+                context.startActivity(intent);
+                ((Activity) context).finish();
+            }else if (!phpDB.getState()){
+                showDialog();
+            }
         }
         private Calendar parseDate(String orderDT){
             //先分" "
             String[] split1 = orderDT.split(" ");
-            for(String s : split1)
-                Log.d("Calendar Parse",s);
             //再分"-"
             String[] split2 = split1[0].split("-");
-            for(String s : split2)
-                Log.d("Calendar Parse",s);
             int YY = Integer.parseInt(split2[0]);
             int MM = Integer.parseInt(split2[1]);
             int DD = Integer.parseInt(split2[2]);
             //再分":"
             String[] split3 = split1[1].split(":");
-            for(String s : split3)
-                Log.d("Calendar Parse",s);
             int hh = Integer.parseInt(split3[0]);
             int mm = Integer.parseInt(split3[1]);
             int ss = Integer.parseInt(split3[2]);
@@ -191,6 +224,46 @@ public class WelcomeActivity extends AppCompatActivity {
             c.set(YY,MM,DD,hh,mm,ss);
             return c;
         }
+    }
 
+    public static Member findMemberFile() {
+        File fileDir = new File(String.valueOf(weakReference.get().getFilesDir()) +
+                "/storeUser.txt");
+        String json = "";
+        Member member = Member.getInstance();
+        try {
+            FileReader fileReader = new FileReader(fileDir);
+            BufferedReader bReader = new BufferedReader(fileReader);
+            json = bReader.readLine();
+            bReader.close();
+            Log.e("Member_json", json);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new parseJSON(json, member).parse();
+    }
+
+    private static void showDialog() {
+        Context context = weakReference.get();
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.connFail_noConn))
+                .setCancelable(false)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setMessage(context.getString(R.string.connFail_check))
+                .setPositiveButton(context.getString(R.string.connFail_retry),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                getOrderData("WelcomeActivity");
+                            }
+                        })
+                .setNegativeButton("離開", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        ((Activity)weakReference.get()).finish();
+                    }
+                }).create().show();
     }
 }

@@ -2,20 +2,30 @@ package langotec.numberq.store.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import langotec.numberq.store.MainActivity;
 import langotec.numberq.store.R;
+import langotec.numberq.store.WelcomeActivity;
 import langotec.numberq.store.adapter.RecyclerViewAdapter;
+import langotec.numberq.store.login.Member;
+import langotec.numberq.store.map.PhpDB;
 import langotec.numberq.store.menu.MainOrder;
+import langotec.numberq.store.menu.MenuBaseAdapter;
 import langotec.numberq.store.menu.Order;
 
 public class OrderListFragment extends Fragment {
@@ -24,15 +34,10 @@ public class OrderListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
-    //View
-    private View view;
-
-    //Context
-    private Context context;
-
-    //OrderList
-    private ArrayList<MainOrder> orderList;
+    private static WeakReference<Context> weakReference;
+    private static Member member;
+    private static WelcomeActivity.OrderHandler orderHandler;
+    public static Fragment orderListFragment;
 
     public OrderListFragment() {
         // Required empty public constructor
@@ -41,36 +46,83 @@ public class OrderListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        weakReference = new WeakReference<>(getContext());
+        orderHandler = new WelcomeActivity.OrderHandler(weakReference, "OrderListFragment");
+        member = WelcomeActivity.findMemberFile();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_order_list, container, false);
-        context = getContext();
-
-        orderList = MainActivity.orderList;
-        TextView textNoOrder = view.findViewById(R.id.text_no_order);
-        if (orderList.size() > 0){
-            textNoOrder.setVisibility(View.INVISIBLE);
+        View orderView;
+        ArrayList<MainOrder> orderList = MainActivity.orderList;
+        if (orderList == null){
+            orderView = inflater.inflate(R.layout.fragment_empty, container, false);
+            TextView emptyText = (TextView) orderView.findViewById(R.id.emptyText);
+            emptyText.setText(getString(R.string.order_queryProcessing));
+        }else if (orderList.size() == 0){
+            orderView = inflater.inflate(R.layout.fragment_empty, container, false);
+            TextView emptyText = (TextView) orderView.findViewById(R.id.emptyText);
+            emptyText.setText(getString(R.string.order_emptyOrders));
+        }else {
+            orderView = inflater.inflate(R.layout.fragment_order_list, container, false);
+            mRecyclerView = orderView.findViewById(R.id.order_list);
+            mRecyclerView.setHasFixedSize(false);
+            mLayoutManager = new LinearLayoutManager(getContext());
+            mRecyclerView.setLayoutManager(mLayoutManager);
+            mAdapter = new RecyclerViewAdapter(orderList);
+            mRecyclerView.setAdapter(mAdapter);
         }
-        setupRecyclerView();
-        return view;
-
-
+        return orderView;
     }
 
-    private void setupRecyclerView(){
-        mRecyclerView = view.findViewById(R.id.order_list);
-        // 若設為FixedSize可以增加效率不過就喪失了彈性
-        mRecyclerView.setHasFixedSize(false);
-        // 選擇一種Layout管理器這邊是選擇（linear layout manager）
-        mLayoutManager = new LinearLayoutManager(context);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        // 設定適配器
-        mAdapter = new RecyclerViewAdapter(orderList);
-        mRecyclerView.setAdapter(mAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
+        orderListFragment = this;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        orderHandler.removeCallbacksAndMessages(null);
+        System.gc();
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.order_refresh).setVisible(true);
+        menu.findItem(R.id.menu_cart_clear).setVisible(false);
+        menu.findItem(R.id.menu_cart_createOrder).setVisible(false);
+        menu.findItem(R.id.menu_search).setVisible(false);
+        menu.findItem(R.id.menu_backHome).setVisible(false);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.order_refresh:
+                MainActivity.orderList = null;
+                refreshOrder();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //延遲100毫秒避免畫面更新異常
+                        WelcomeActivity.getOrderData("OrderListFragment");
+                    }
+                }, 100);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static void refreshOrder(){
+        Fragment fragment = OrderListFragment.orderListFragment;
+        if (fragment.isResumed()) {
+            fragment.getFragmentManager().beginTransaction().detach(fragment)
+                    .attach(fragment).commit();
+        }
+    }
 }

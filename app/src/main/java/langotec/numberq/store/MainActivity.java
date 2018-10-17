@@ -1,7 +1,10 @@
 package langotec.numberq.store;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
@@ -16,7 +19,9 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Date;
 
 import langotec.numberq.store.R;
 import langotec.numberq.store.adapter.BottomNavigationViewHelper;
@@ -25,12 +30,16 @@ import langotec.numberq.store.fragment.MoreFragment;
 import langotec.numberq.store.fragment.OrderAnalysisFragment;
 import langotec.numberq.store.fragment.OrderFinishFragment;
 import langotec.numberq.store.fragment.OrderListFragment;
+import langotec.numberq.store.map.PhpDB;
 import langotec.numberq.store.menu.MainOrder;
 import langotec.numberq.store.menu.Order;
+import langotec.numberq.store.menu.OrderDetailActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<MainOrder> orderList;
+    public static ArrayList<MainOrder> finishOrderList;
+    private static WeakReference<Context> weakReference;
     public static String QRCode;
 
     private ViewPager viewPager;
@@ -43,25 +52,14 @@ public class MainActivity extends AppCompatActivity {
     private OrderAnalysisFragment orderAnalysisFragment;
     private MoreFragment moreFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //take data
-        if (orderList == null){
-            try{
-                orderList = new ArrayList<>();
-                orderList = (ArrayList<MainOrder>) getIntent().getSerializableExtra("orderList");
-                if(orderList.size()>0){
-                    Log.e("data","orderList 1:"+orderList.get(0).toString());
-                }else {
-                    Log.e("data","orderList data size:"+orderList.size());
-                }
-            }catch (Exception e){
-                Log.e("dataErr",e.toString());
-            }
-        }
+        Context context = this;
+        weakReference = new WeakReference<>(context);
+        Log.e("data","orderList data size:"+orderList.size());
     }
 
     @Override
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("currentPage",viewPager.getCurrentItem());
+        outState.putInt("currentPage", viewPager.getCurrentItem());
         super.onSaveInstanceState(outState);
 
     }
@@ -116,11 +114,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if (result!= null) {
-            if (result.getContents()==null) {
-                Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_SHORT).show();
+            if (result.getContents() == null) {
+                Toast.makeText(this, getString(R.string.order_QRCodeScanCancel), Toast.LENGTH_SHORT).show();
             } else {
                 QRCode = result.getContents();
-                Toast.makeText(this,QRCode,Toast.LENGTH_SHORT).show();
+                Log.e("QRCode", QRCode);
+                for (int i = 0; i < orderList.size(); i++){
+                    MainOrder order = orderList.get(i);
+                    if (order.getOrderId().equals(QRCode) && order.getPayCheck() == 4){
+                        Toast.makeText(this, getString(R.string.order_finished),
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    }
+                    if (order.getOrderId().equals(QRCode)){
+                        OrderDetailActivity.orderChangeState(order, "MainActivity", weakReference);
+                        break;
+                    }else if (i == orderList.size() - 1){
+                        Toast.makeText(this, getString(R.string.order_notThisStore),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -160,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
-
             @Override
             public void onPageSelected(int position) {
                 if (menuItem != null){
@@ -172,7 +184,6 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.getMenu().getItem(position).setChecked(true);
                 menuItem = bottomNavigationView.getMenu().getItem(position);
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
 
@@ -180,19 +191,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ViewPagerAdapter VPAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-
         orderListFragment = new OrderListFragment();
         orderFinishFragment = new OrderFinishFragment();
         orderAnalysisFragment = new OrderAnalysisFragment();
         moreFragment = new MoreFragment();
-
         VPAdapter.addFragment(orderListFragment);
         VPAdapter.addFragment(orderFinishFragment);
         VPAdapter.addFragment(orderAnalysisFragment);
         VPAdapter.addFragment(moreFragment);
-
         viewPager.setAdapter(VPAdapter);
         Log.e("init","init finish");
-//        orderListFragment = (OrderListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_order_list);
     }
+
 }

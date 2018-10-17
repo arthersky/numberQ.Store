@@ -9,14 +9,12 @@ import langotec.numberq.store.login.Member;
 
 public class parseJSON {
     private String mycontent;
-    private Member member;
-    //private ArrayList<Store> storeList;
-    //private ArrayList<Menu> menuList;
+    private Member storeAcnt;
     private ArrayList<?> arrayList;
 
-    public parseJSON(String mycontent, Member member){
+    public parseJSON(String mycontent, Member account){
         this.mycontent = mycontent;
-        this.member = member;
+        this.storeAcnt = account;
     }
 
     public parseJSON(String mycontent, ArrayList<?> arrayList){
@@ -29,19 +27,21 @@ public class parseJSON {
         try {
             JSONObject jsObj = new JSONObject(mycontent);
             int id = Integer.parseInt(jsObj.getString("id"));
-            String userid = jsObj.getString("customerUserId");
+            String userid = jsObj.getString("userId");
             String name = jsObj.getString("userName");
             String phone = jsObj.getString("userPhone");
             String email = jsObj.getString("email");
             String passwd = jsObj.getString("password");
+            String headId = jsObj.getString("HeadId");
+            String branchId = jsObj.getString("BranchId");
             String gmail = jsObj.getString("google_email");
             String lmail = jsObj.getString("line_email");
             String Femail = jsObj.getString("FB_email");
-            member.add(id, userid, name, phone, email, passwd, gmail, lmail, Femail);
+            storeAcnt.add(id, userid, name, phone, email, passwd, headId, branchId, gmail, lmail, Femail);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return member;
+        return storeAcnt;
     }
 
 //    private ArrayList<Menu> parse() {

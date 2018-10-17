@@ -1,4 +1,4 @@
-package langotec.numberq.client.menu;
+package langotec.numberq.store.menu;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,8 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import langotec.numberq.client.MainActivity;
-import langotec.numberq.client.R;
+import langotec.numberq.store.MainActivity;
+import langotec.numberq.store.R;
 
 public class SelectedActivity extends AppCompatActivity {
     private ImageView foodImage, subtractImage, plusImage;

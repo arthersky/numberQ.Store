@@ -5,7 +5,6 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
 //實作Serializable，讓intent或bundle可以丟此物件或存檔
 public class Menu implements Serializable{
@@ -21,15 +20,18 @@ public class Menu implements Serializable{
 	private String from;
 	private String HeadId;
 	private String productId;
-	private int waitNum;
+	private String headImageURL;
+	private int waitNum, branchId;
 	private int quantityNum = 1;
 	private boolean available;
 	private final short MAXQUANTITY = 200; //最大單筆菜單可加入購物車數量
 
-	public Menu(String headName, String branchName, String HeadId, String productId, String productType,
-                String productName, String price, String image, boolean available, String desc) {
+	public Menu(String headName, String branchName, String headImageURL, String HeadId, String productId,
+                String productType, String productName, String price, String image,
+                boolean available, String desc, String waitTime, int branchId) {
 		setHeadName(headName);
 		setBranchName(branchName);
+		setHeadImageURL(headImageURL);
 		setHeadId(HeadId);
 		setProductId(productId);
 		setType(productType);
@@ -38,7 +40,9 @@ public class Menu implements Serializable{
 		setImage(image);
 		setAvailable(available);
 		setDesc(desc);
-		setFrom("fromSelectActivity");
+		setFrom("fromMenuActivity");
+		setWaitTime(waitTime);
+		setBranchId(branchId);
 	}
 
 	//region getters & setters
@@ -85,15 +89,19 @@ public class Menu implements Serializable{
 
 	//Todo: 計算等待時間的功能
 	public String getWaitTime() {
-		Calendar date = Calendar.getInstance();
-		String minutes = Integer.toString(date.get(Calendar.MINUTE));
-		String hours = Integer.toString(date.get(Calendar.HOUR_OF_DAY));
-		if (minutes.length() == 1)
-			minutes = "0" + minutes;
-		if (hours.length() == 1)
-			hours = "0" + hours;
-		waitTime = hours + ":" + minutes;
+//		Calendar date = Calendar.getInstance();
+//		String minutes = Integer.toString(date.get(Calendar.MINUTE));
+//		String hours = Integer.toString(date.get(Calendar.HOUR_OF_DAY));
+//		if (minutes.length() == 1)
+//			minutes = "0" + minutes;
+//		if (hours.length() == 1)
+//			hours = "0" + hours;
+//		waitTime = hours + ":" + minutes;
 		return waitTime;
+	}
+
+	public void setWaitTime(String waitTime) {
+		this.waitTime = waitTime;
 	}
 
 	public int getWaitNum() {
@@ -136,6 +144,14 @@ public class Menu implements Serializable{
 		this.branchName = branchName;
 	}
 
+	public int getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(int branchId) {
+		this.branchId = branchId;
+	}
+
 	public String getFrom() {
 		return from;
 	}
@@ -167,6 +183,14 @@ public class Menu implements Serializable{
 	public void setProductId(String productId) {
 		this.productId = productId;
 	}
+
+    public String getHeadImageURL() {
+        return headImageURL;
+    }
+
+    public void setHeadImageURL(String headImageURL) {
+        this.headImageURL = headImageURL;
+    }
 //endregion
 
 	public void setImageView(ImageView imageView){

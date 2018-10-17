@@ -15,11 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import langotec.numberq.store.R;
-import langotec.numberq.store.dbConnect.CustomerDBConn;
+import langotec.numberq.store.dbConnect.UserDBConn;
 import langotec.numberq.store.login.AccInfoActivity;
 import langotec.numberq.store.login.LoginActivity;
 import langotec.numberq.store.login.Member;
@@ -31,7 +30,7 @@ public class MoreFragment extends Fragment {
     private TextView status;
     private View view;
     private Member member;
-    private CustomerDBConn user;
+    private UserDBConn user;
     private MyHandler handler = new MyHandler();
     private ProgressDialog loading;
 
@@ -59,7 +58,7 @@ public class MoreFragment extends Fragment {
             status.setText(R.string.not_login);
             btnCheck.setText(R.string.login);
         } else {
-            status.setText(member.getEmail());
+            status.setText(member.getUserId());
             btnCheck.setText(R.string.my_file);
         }
 
@@ -74,8 +73,8 @@ public class MoreFragment extends Fragment {
                             startActivity(intent);
                         } else if (btnCheck.getText().toString().trim().equals(getResources().getString(R.string.my_file))) {
                             loading = ProgressDialog.show(getActivity(),"載入會員資料","Loading...", false);
-                            user = CustomerDBConn.getInstance();
-                            user.query(handler, context.getFilesDir(), member.getEmail(), member.getPassword());
+                            user = new UserDBConn(handler, context.getFilesDir(), member.getUserId(), null, null, null, member.getPassword(), UserDBConn.STATUS_LOGIN);
+                            user.start();
                         }
                         break;
                 }

@@ -1,17 +1,14 @@
-package langotec.numberq.client.menu;
+package langotec.numberq.store.menu;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import langotec.numberq.client.MainActivity;
-import langotec.numberq.client.R;
+import langotec.numberq.store.R;
 
 public class LoadingDialog {
 

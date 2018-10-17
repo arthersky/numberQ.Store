@@ -6,32 +6,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import langotec.numberq.store.Store;
 import langotec.numberq.store.login.Member;
-import langotec.numberq.store.menu.Menu;
 
 public class ReadFile {
     private String myfile;
     private File dir;
-    private Member member;
-    public ReadFile(File dir, String myfile, Member member){
-        Log.e("readFile", "dir:" + dir + "/" + myfile + "   member:"+member.toString());
+    private Member storeAcnt;
+
+    public ReadFile(File dir, String myfile, Member account){
+        Log.e("readFile", "dir:" + dir + "/" + myfile + "   storeAcnt:"+account.toString());
         this.dir = dir;
         this.myfile = myfile;
-        this.member = member;
+        this.storeAcnt = account;
     }
 
-    public ReadFile(File dir, String myfile, Store store){
-        this.dir = dir;
-        this.myfile = myfile;
-    }
-
-    public ReadFile(File dir, String myfile, Menu menu){
-        this.dir = dir;
-        this.myfile = myfile;
-    }
-
-    public Boolean read() {
+    public Member read() {
         File file = new File(dir, myfile);
         if(file.exists()){
             char[] buffer = new char[10]; //一次讀取一個位元
@@ -43,21 +32,22 @@ public class ReadFile {
                     sb.append(buffer);
                 }
             } catch(IOException e){
+
             } finally{
                 try{
                     fr.close();  // 關閉檔案
                 } catch(IOException e){  }
             }
+
             final String result = sb.toString().trim();
             Log.e("result", result);
             if(result.equals("no record")){
-                return false;
+                return null;
             }else{
-                member = new parseJSON(result, member).parse();
-                return true;
+                return storeAcnt = new parseJSON(result, storeAcnt).parse();
             }
         } else {
-            return false;
+            return null;
         }
     }
 }
