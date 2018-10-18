@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -40,20 +41,23 @@ public class OrderDetailActivity extends AppCompatActivity {
         weakReference = new WeakReference<>(context);
         setContentView(R.layout.activity_order_detail);
         setLayout();
-
     }
 
     @Override
     public void onBackPressed() {
-        if (allowBack)
-            super.onBackPressed();
+        if (allowBack){
+            Intent intent = new Intent(weakReference.get(), MainActivity.class);
+            intent.putExtra("currentPage", 0);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void setLayout(){
         Activity activity = ((Activity)weakReference.get());
-        ArrayList<MainOrder> orderList = MainActivity.orderList;
-        mainOrder = orderList.get(activity.getIntent().getIntExtra("position",0));
+        mainOrder = (MainOrder) activity.getIntent().getSerializableExtra("MainOrder");
 
         TextView text_orderDT = activity.findViewById(R.id.order_orderDT);
         TextView text_orderUserName = activity.findViewById(R.id.order_user_name);

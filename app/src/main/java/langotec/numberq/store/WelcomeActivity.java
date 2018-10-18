@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import langotec.numberq.store.dbConnect.parseJSON;
+import langotec.numberq.store.fragment.OrderFinishFragment;
 import langotec.numberq.store.fragment.OrderListFragment;
 import langotec.numberq.store.login.LoginActivity;
 import langotec.numberq.store.login.Member;
@@ -121,25 +122,41 @@ public class WelcomeActivity extends AppCompatActivity {
                                     indexOrder.getSumprice().add(sumprice);
                                     flag = true;
                                     index++;
-                                    if (index + orderList.size()  == ja.length()) {
-                                        switch (from) {
-                                            case "WelcomeActivity":
-                                                Intent intent = new Intent();
-                                                intent.setClass(context, MainActivity.class);
-                                                context.startActivity(intent);
-                                                ((Activity) context).finish();
-                                                break;
-                                            case "OrderDetailActivity":
-                                                OrderDetailActivity.setLayout();
-                                                break;
-                                            case "OrderListFragment":
-                                                OrderListFragment.refreshOrder();
-                                                break;
-                                            case "MainActivity":
-                                                break;
-                                        }
-                                    }
                                     break;
+                                }
+                            }
+                            for (int i2 = 0; i2 < orderFinishList.size(); i2++){
+                                MainOrder indexOrder = orderFinishList.get(i2);
+                                if (indexOrder.getOrderId().equals(orderId) &&
+                                        indexOrder.getPayCheck() == 4){
+                                    indexOrder.getProductName().add(productName);
+                                    indexOrder.getQuantity().add(quantity);
+                                    indexOrder.getSumprice().add(sumprice);
+                                    flag = true;
+                                    index++;
+                                    break;
+                                }
+                            }
+                            if (index + orderList.size() +
+                                    orderFinishList.size()  == ja.length()) {
+                                switch (from) {
+                                    case "WelcomeActivity":
+                                        Intent intent = new Intent();
+                                        intent.setClass(context, MainActivity.class);
+                                        context.startActivity(intent);
+                                        ((Activity) context).finish();
+                                        break;
+                                    case "OrderDetailActivity":
+                                        OrderDetailActivity.setLayout();
+                                        break;
+                                    case "OrderListFragment":
+                                        OrderListFragment.refreshOrder();
+                                        break;
+                                    case "OrderFinishListFragment":
+                                        OrderFinishFragment.refreshOrder();
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
                             if (flag)
@@ -192,12 +209,10 @@ public class WelcomeActivity extends AppCompatActivity {
                             mainOrder.getQuantity().add(quantity);
                             mainOrder.getSumprice().add(sumprice);
 
-//                                if (mainOrder.getPayCheck() == 4)
-//                                    orderFinishList.add(mainOrder);
-//                                else
-                                orderList.add(mainOrder);
-
-
+                                if (mainOrder.getPayCheck() == 4)
+                                    orderFinishList.add(mainOrder);
+                                else
+                                    orderList.add(mainOrder);
                         } catch (JSONException e) {
                             Log.e("JSON ERROR", e.toString());
                         }

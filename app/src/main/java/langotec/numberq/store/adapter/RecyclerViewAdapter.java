@@ -83,7 +83,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public void onClick(View view) {
                     MainOrder mainOrder = (MainOrder) data.get(position);
                     Intent intent = new Intent(context, OrderDetailActivity.class);
-                    intent.putExtra("position",position);
+                    intent.putExtra("MainOrder", mainOrder);
                     ((Activity)context).startActivityForResult(intent, 1);
                 }
             });
