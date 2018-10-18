@@ -56,7 +56,7 @@ public class OrderFinishFragment extends Fragment {
         }else if (orderFinishList.size() == 0){
             orderView = inflater.inflate(R.layout.fragment_empty, container, false);
             TextView emptyText = (TextView) orderView.findViewById(R.id.emptyText);
-            emptyText.setText(getString(R.string.order_emptyOrders));
+            emptyText.setText(getString(R.string.order_emptyFinishOrders));
         }else {
             orderView = inflater.inflate(R.layout.fragment_order_list, container, false);
             RecyclerView mRecyclerView = orderView.findViewById(R.id.order_list);

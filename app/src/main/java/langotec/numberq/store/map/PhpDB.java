@@ -467,10 +467,11 @@ public class PhpDB implements Runnable
             try{
                 jsonArray = getJSON(getPHPConnection(""));
                 if (jsonArray.length() >0) blReady = true;
+                else jsonArray = new JSONArray();
                 Log.e("getJSON","取得長度:"+jsonArray.length());
             }catch(Exception ex){
                 Log.e("getJSON()",ex.toString());
-                jsonArray = null;
+                jsonArray=  new JSONArray();
             }
             return jsonArray;
         }
@@ -509,10 +510,11 @@ public class PhpDB implements Runnable
             try{
                 jsonArray = getOkJSON(getPHPOkConnection(""));
                 if (jsonArray.length() >0) blReady = true;
+                else jsonArray= new JSONArray();
                 Log.e("getJSON","取得長度:"+jsonArray.length());
             }catch(Exception ex){
                 Log.e("getJSON()",ex.toString());
-                jsonArray= null;
+                jsonArray=  new JSONArray();
             }
             return jsonArray;
         }

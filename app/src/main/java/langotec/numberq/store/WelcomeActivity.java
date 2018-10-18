@@ -37,7 +37,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private Context context;
     private static WeakReference<Context> weakReference;
     public static PhpDB phpDB;
-    public static JSONArray ja;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +77,7 @@ public class WelcomeActivity extends AppCompatActivity {
     public static class OrderHandler extends Handler {
         ArrayList<MainOrder> orderList = MainActivity.orderList;
         ArrayList<MainOrder> orderFinishList = MainActivity.orderFinishList;
+        JSONArray ja;
         Context context;
         String from;
         int index = 0;
@@ -107,7 +107,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         boolean flag = false;
                         try {
                             JSONObject jsObj = ja.getJSONObject(i);
-//                                Log.e("jsObj", jsObj.toString());
+//                            Log.e("jsObj", jsObj.toString());
                             String orderId = jsObj.optString("orderId");
                             String productName = jsObj.optString("productName");
                             String quantity = jsObj.optString("quantity");
@@ -139,25 +139,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             }
                             if (index + orderList.size() +
                                     orderFinishList.size()  == ja.length()) {
-                                switch (from) {
-                                    case "WelcomeActivity":
-                                        Intent intent = new Intent();
-                                        intent.setClass(context, MainActivity.class);
-                                        context.startActivity(intent);
-                                        ((Activity) context).finish();
-                                        break;
-                                    case "OrderDetailActivity":
-                                        OrderDetailActivity.setLayout();
-                                        break;
-                                    case "OrderListFragment":
-                                        OrderListFragment.refreshOrder();
-                                        break;
-                                    case "OrderFinishListFragment":
-                                        OrderFinishFragment.refreshOrder();
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                setActivity();
                             }
                             if (flag)
                                 continue;
@@ -182,28 +164,10 @@ public class WelcomeActivity extends AppCompatActivity {
                             int available = jsObj.optInt("available");
                             int waitingTime = jsObj.optInt("waitingTime");
                             String description = jsObj.optString("description");
-                            MainOrder mainOrder = new MainOrder(
-                                    orderId,
-                                    userId,
-                                    HeadId,
-                                    BranchId,
-                                    deliveryType,
-                                    contactPhone,
-                                    deliveryAddress,
-                                    taxId,
-                                    payWay,
-                                    payCheck,
-                                    totalPrice,
-                                    comment,
-                                    userName,
-                                    orderDTc,
-                                    orderGetDTc,
-                                    HeadName,
-                                    BranchName,
-                                    productType,
-                                    image,
-                                    available,
-                                    waitingTime,
+                            MainOrder mainOrder = new MainOrder(orderId, userId, HeadId, BranchId,
+                                    deliveryType, contactPhone, deliveryAddress, taxId, payWay,
+                                    payCheck, totalPrice, comment, userName, orderDTc, orderGetDTc,
+                                    HeadName, BranchName, productType, image, available, waitingTime,
                                     description);
                             mainOrder.getProductName().add(productName);
                             mainOrder.getQuantity().add(quantity);
@@ -219,11 +183,8 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                 }
             }
-            if (from.equals("WelcomeActivity") && !phpDB.isJSON()) {
-                Intent intent = new Intent();
-                intent.setClass(context, MainActivity.class);
-                context.startActivity(intent);
-                ((Activity) context).finish();
+            if (ja == null) {
+                setActivity();
             }else if (from.equals("WelcomeActivity") && !phpDB.getState()){
                 showDialog();
             }
@@ -244,6 +205,28 @@ public class WelcomeActivity extends AppCompatActivity {
             Calendar c = Calendar.getInstance();
             c.set(YY,MM,DD,hh,mm,ss);
             return c;
+        }
+
+        private void setActivity(){
+            switch (from) {
+                case "WelcomeActivity":
+                    Intent intent = new Intent();
+                    intent.setClass(context, MainActivity.class);
+                    context.startActivity(intent);
+                    ((Activity) context).finish();
+                    break;
+                case "OrderDetailActivity":
+                    OrderDetailActivity.setLayout();
+                    break;
+                case "OrderListFragment":
+                    OrderListFragment.refreshOrder();
+                    break;
+                case "OrderFinishListFragment":
+                    OrderFinishFragment.refreshOrder();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

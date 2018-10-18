@@ -162,6 +162,7 @@
 
     <string name="order_queryProcessing">資料查詢中…</string>
     <string name="order_emptyOrders">您沒有已下訂商品</string>
+    <string name="order_emptyFinishOrders">您沒有已完成商品</string>
     <string name="order_icon_refresh">更新定單內容</string>
     <array name="order_statusArray">
         <item>未付費</item>
