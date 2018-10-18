@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import langotec.numberq.store.MainActivity;
 import langotec.numberq.store.R;
 import langotec.numberq.store.dbConnect.ReadFile;
 
@@ -55,9 +56,15 @@ public class AccInfoActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
-            finish();
+            startMainActivityAt3();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startMainActivityAt3();
     }
 
     public void onLogoutClick(View view){
@@ -70,13 +77,21 @@ public class AccInfoActivity extends AppCompatActivity {
                         file.delete();
                         account.delete();
                         dialogInterface.dismiss();
-                        Intent intent = new Intent();
-                        intent.setClass(context, LoginActivity.class);
+                        startMainActivityAt3();
+                        Intent intent = new Intent(context, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     }
                 })
                 .setNegativeButton("取消", null)
                 .create().show();
+    }
+
+    private void startMainActivityAt3(){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("currentPage", 3);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

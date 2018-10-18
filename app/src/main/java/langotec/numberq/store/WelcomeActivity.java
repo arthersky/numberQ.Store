@@ -63,9 +63,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public static void getOrderData(String from){
         MainActivity.orderList = new ArrayList<>();
+        MainActivity.orderFinishList = new ArrayList<>();
         Member member = findMemberFile();
         phpDB = new PhpDB(weakReference, new OrderHandler(weakReference, from));
-        phpDB.getPairSet().setPairFunction("orderMSList");
+        phpDB.getPairSet().setPairFunction(phpDB.pairSet.phpSQLorderMSList);
         phpDB.getPairSet().setPairSearch(4, member.getBranchId());//第四個欄位,branchId
         phpDB.getPairSet().setPairOkHTTP();
         phpDB.getPairSet().setPairJSON();
@@ -75,8 +76,10 @@ public class WelcomeActivity extends AppCompatActivity {
 
     public static class OrderHandler extends Handler {
         ArrayList<MainOrder> orderList = MainActivity.orderList;
+        ArrayList<MainOrder> orderFinishList = MainActivity.orderFinishList;
         Context context;
         String from;
+        int index = 0;
         public OrderHandler(WeakReference weakReference, String from) {
             context = (Context) weakReference.get();
             this.from = from;
@@ -99,103 +102,106 @@ public class WelcomeActivity extends AppCompatActivity {
                     }
                 } else if (phpDB.isJSON()) {
                     ja = phpDB.getJSONData();
-                        for (int i = 0; i < ja.length(); i++) {
-                            boolean flag = false;
-                            try {
-                                JSONObject jsObj = ja.getJSONObject(i);
+                    for (int i = 0; i < ja.length(); i++) {
+                        boolean flag = false;
+                        try {
+                            JSONObject jsObj = ja.getJSONObject(i);
 //                                Log.e("jsObj", jsObj.toString());
-                                String orderId = jsObj.optString("orderId");
-                                String productName = jsObj.optString("productName");
-                                String quantity = jsObj.optString("quantity");
-                                String sumprice = jsObj.optString("sumPrice");
-                                String productType = jsObj.optString("productType");
-                                String image = jsObj.optString("image");
-                                for (int i2 = 0; i2 < orderList.size(); i2++){
-                                    MainOrder indexOrder = orderList.get(i2);
-                                    if (indexOrder.getOrderId().equals(orderId)){
-                                        indexOrder.getProductName().add(productName);
-                                        indexOrder.getQuantity().add(quantity);
-                                        indexOrder.getSumprice().add(sumprice);
-                                        flag = true;
-                                        break;
+                            String orderId = jsObj.optString("orderId");
+                            String productName = jsObj.optString("productName");
+                            String quantity = jsObj.optString("quantity");
+                            String sumprice = jsObj.optString("sumPrice");
+                            String productType = jsObj.optString("productType");
+                            String image = jsObj.optString("image");
+                            for (int i2 = 0; i2 < orderList.size(); i2++){
+                                MainOrder indexOrder = orderList.get(i2);
+                                if (indexOrder.getOrderId().equals(orderId)){
+                                    indexOrder.getProductName().add(productName);
+                                    indexOrder.getQuantity().add(quantity);
+                                    indexOrder.getSumprice().add(sumprice);
+                                    flag = true;
+                                    index++;
+                                    if (index + orderList.size()  == ja.length()) {
+                                        switch (from) {
+                                            case "WelcomeActivity":
+                                                Intent intent = new Intent();
+                                                intent.setClass(context, MainActivity.class);
+                                                context.startActivity(intent);
+                                                ((Activity) context).finish();
+                                                break;
+                                            case "OrderDetailActivity":
+                                                OrderDetailActivity.setLayout();
+                                                break;
+                                            case "OrderListFragment":
+                                                OrderListFragment.refreshOrder();
+                                                break;
+                                            case "MainActivity":
+                                                break;
+                                        }
                                     }
+                                    break;
                                 }
-                                if (flag)
-                                    continue;
-                                String userId = jsObj.optString("userId");
-                                String HeadId = jsObj.optString("HeadId");
-                                String BranchId = jsObj.optString("BranchId");
-                                String deliveryType = jsObj.optString("deliveryType");
-                                String contactPhone = jsObj.optString("contactPhone");
-                                String deliveryAddress = jsObj.optString("deliveryAddress");
-                                String taxId = jsObj.optString("taxId");
-                                String payWay = jsObj.optString("payWay");
-                                int payCheck = Integer.parseInt(jsObj.optString("payCheck"));
-                                int totalPrice = Integer.parseInt(jsObj.optString("totalPrice"));
-                                String comment = jsObj.optString("comment");
-                                String userName = jsObj.optString("userName");
-                                String orderDT = jsObj.optString("orderDT");
-                                Calendar orderDTc = parseDate(orderDT);
-                                String orderGetDT = jsObj.optString("orderGetDT");
-                                Calendar orderGetDTc = parseDate(orderGetDT);
-                                String HeadName = jsObj.optString("HeadName");
-                                String BranchName = jsObj.optString("BranchName");
-                                int available = jsObj.optInt("available");
-                                int waitingTime = jsObj.optInt("waitingTime");
-                                String description = jsObj.optString("description");
+                            }
+                            if (flag)
+                                continue;
+                            String userId = jsObj.optString("userId");
+                            String HeadId = jsObj.optString("HeadId");
+                            String BranchId = jsObj.optString("BranchId");
+                            String deliveryType = jsObj.optString("deliveryType");
+                            String contactPhone = jsObj.optString("contactPhone");
+                            String deliveryAddress = jsObj.optString("deliveryAddress");
+                            String taxId = jsObj.optString("taxId");
+                            String payWay = jsObj.optString("payWay");
+                            int payCheck = Integer.parseInt(jsObj.optString("payCheck"));
+                            int totalPrice = Integer.parseInt(jsObj.optString("totalPrice"));
+                            String comment = jsObj.optString("comment");
+                            String userName = jsObj.optString("userName");
+                            String orderDT = jsObj.optString("orderDT");
+                            Calendar orderDTc = parseDate(orderDT);
+                            String orderGetDT = jsObj.optString("orderGetDT");
+                            Calendar orderGetDTc = parseDate(orderGetDT);
+                            String HeadName = jsObj.optString("HeadName");
+                            String BranchName = jsObj.optString("BranchName");
+                            int available = jsObj.optInt("available");
+                            int waitingTime = jsObj.optInt("waitingTime");
+                            String description = jsObj.optString("description");
+                            MainOrder mainOrder = new MainOrder(
+                                    orderId,
+                                    userId,
+                                    HeadId,
+                                    BranchId,
+                                    deliveryType,
+                                    contactPhone,
+                                    deliveryAddress,
+                                    taxId,
+                                    payWay,
+                                    payCheck,
+                                    totalPrice,
+                                    comment,
+                                    userName,
+                                    orderDTc,
+                                    orderGetDTc,
+                                    HeadName,
+                                    BranchName,
+                                    productType,
+                                    image,
+                                    available,
+                                    waitingTime,
+                                    description);
+                            mainOrder.getProductName().add(productName);
+                            mainOrder.getQuantity().add(quantity);
+                            mainOrder.getSumprice().add(sumprice);
 
-                                MainOrder mainOrder = new MainOrder(
-                                        orderId,
-                                        userId,
-                                        HeadId,
-                                        BranchId,
-                                        deliveryType,
-                                        contactPhone,
-                                        deliveryAddress,
-                                        taxId,
-                                        payWay,
-                                        payCheck,
-                                        totalPrice,
-                                        comment,
-                                        userName,
-                                        orderDTc,
-                                        orderGetDTc,
-                                        HeadName,
-                                        BranchName,
-                                        productType,
-                                        image,
-                                        available,
-                                        waitingTime,
-                                        description);
-                                mainOrder.getProductName().add(productName);
-                                mainOrder.getQuantity().add(quantity);
-                                mainOrder.getSumprice().add(sumprice);
+//                                if (mainOrder.getPayCheck() == 4)
+//                                    orderFinishList.add(mainOrder);
+//                                else
                                 orderList.add(mainOrder);
-                                Log.e("JSON DATA", ja.get(i).toString());
-                            } catch (JSONException e) {
-                                Log.e("JSON ERROR", e.toString());
-                            }
-                            Log.e("i, ja.length", i + ", " + ja.length());
-                            if (i + orderList.size() == ja.length()) {
-                                switch (from) {
-                                    case "WelcomeActivity":
-                                        Intent intent = new Intent();
-                                        intent.setClass(context, MainActivity.class);
-                                        context.startActivity(intent);
-                                        break;
-                                    case "OrderDetailActivity":
-                                        OrderDetailActivity.setLayout();
-                                        break;
-                                    case "OrderListFragment":
-                                        OrderListFragment.refreshOrder();
-                                        break;
-                                    case "MainActivity":
-                                        break;
-                                }
-                            }
-                            ((Activity) context).finish();
+
+
+                        } catch (JSONException e) {
+                            Log.e("JSON ERROR", e.toString());
                         }
-//                        Log.e("orderlist","order List size:"+ orderList.size());
+                    }
                 }
             }
             if (from.equals("WelcomeActivity") && !phpDB.isJSON()) {
@@ -203,7 +209,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 intent.setClass(context, MainActivity.class);
                 context.startActivity(intent);
                 ((Activity) context).finish();
-            }else if (!phpDB.getState()){
+            }else if (from.equals("WelcomeActivity") && !phpDB.getState()){
                 showDialog();
             }
         }

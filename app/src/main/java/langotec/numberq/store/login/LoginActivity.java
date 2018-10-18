@@ -1,5 +1,6 @@
 package langotec.numberq.store.login;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,6 +57,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.finishAffinity();
     }
 
     private void setLayout(){

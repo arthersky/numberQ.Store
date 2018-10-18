@@ -30,13 +30,7 @@ import langotec.numberq.store.menu.Order;
 
 public class OrderListFragment extends Fragment {
 
-    //RecyclerView
-    private RecyclerView mRecyclerView;
-    private RecyclerViewAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private static WeakReference<Context> weakReference;
-    private static Member member;
-    private static WelcomeActivity.OrderHandler orderHandler;
+    private WelcomeActivity.OrderHandler orderHandler;
     public static Fragment orderListFragment;
 
     public OrderListFragment() {
@@ -47,9 +41,8 @@ public class OrderListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        weakReference = new WeakReference<>(getContext());
+        WeakReference<Context> weakReference = new WeakReference<>(getContext());
         orderHandler = new WelcomeActivity.OrderHandler(weakReference, "OrderListFragment");
-        member = WelcomeActivity.findMemberFile();
     }
 
     @Override
@@ -67,11 +60,11 @@ public class OrderListFragment extends Fragment {
             emptyText.setText(getString(R.string.order_emptyOrders));
         }else {
             orderView = inflater.inflate(R.layout.fragment_order_list, container, false);
-            mRecyclerView = orderView.findViewById(R.id.order_list);
+            RecyclerView mRecyclerView = orderView.findViewById(R.id.order_list);
             mRecyclerView.setHasFixedSize(false);
-            mLayoutManager = new LinearLayoutManager(getContext());
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
             mRecyclerView.setLayoutManager(mLayoutManager);
-            mAdapter = new RecyclerViewAdapter(orderList);
+            RecyclerViewAdapter mAdapter = new RecyclerViewAdapter(orderList);
             mRecyclerView.setAdapter(mAdapter);
         }
         return orderView;

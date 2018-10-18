@@ -38,7 +38,7 @@ import langotec.numberq.store.menu.OrderDetailActivity;
 public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<MainOrder> orderList;
-    public static ArrayList<MainOrder> finishOrderList;
+    public static ArrayList<MainOrder> orderFinishList;
     private static WeakReference<Context> weakReference;
     public static String QRCode;
 
@@ -67,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         setupView();
         viewPager.setCurrentItem(getIntent().getIntExtra("currentPage", 0));
+    }
+
+    //Override onNewIntent才可以從onResume抓到最新Intent
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
     }
 
     @Override
