@@ -29,17 +29,19 @@ public class OrderDetailActivity extends AppCompatActivity {
 
     private static WeakReference<Context> weakReference;
     private static MainOrder mainOrder;
-    private static LoadingDialog loadingDialog;
     private static AlertDialog alertDialog;
     public static boolean orderCreated, allowBack;
+    public static LoadingDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_order_detail);
         Context context = this;
         allowBack = true;
         weakReference = new WeakReference<>(context);
-        setContentView(R.layout.activity_order_detail);
+        Activity activity = ((Activity)weakReference.get());
+        mainOrder = (MainOrder) activity.getIntent().getSerializableExtra("MainOrder");
         setLayout();
     }
 
@@ -57,8 +59,6 @@ public class OrderDetailActivity extends AppCompatActivity {
     @SuppressLint({"SetTextI18n", "DefaultLocale"})
     public static void setLayout(){
         Activity activity = ((Activity)weakReference.get());
-        mainOrder = (MainOrder) activity.getIntent().getSerializableExtra("MainOrder");
-
         TextView text_orderDT = activity.findViewById(R.id.order_orderDT);
         TextView text_orderUserName = activity.findViewById(R.id.order_user_name);
         TextView text_orderContactPhone = activity.findViewById(R.id.order_contactPhone);
@@ -91,12 +91,12 @@ public class OrderDetailActivity extends AppCompatActivity {
         ll2.removeAllViews();
         for (int i=0;i<mainOrder.getProductName().size();i++){
             TextView tv1 = new TextView(activity);
-            tv1.setText(i+1+". "+mainOrder.getProductName().get(i));
+            tv1.setText(i+1+". "+ mainOrder.getProductName().get(i));
             tv1.setTextSize(20);
             tv1.setId(i);
             ll1.addView(tv1);
             TextView tv2 = new TextView(activity);
-            tv2.setText("   數量:"+mainOrder.getQuantity().get(i));
+            tv2.setText("   數量:"+ mainOrder.getQuantity().get(i));
             tv2.setTextSize(20);
             tv2.setId(i);
             ll2.addView(tv2);
@@ -146,25 +146,18 @@ public class OrderDetailActivity extends AppCompatActivity {
                     if (tmpDB.getPairFunction().equals(tmpDB.getPairSet().phpSQLsetOrderUpdate)) {
                         if (tmp.equals("true")) {
                             WelcomeActivity.getOrderData(from);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showDialog("createFinish", handlerWeakReference);
-                                }
-                            }, 1000);
-
                         } else {
-                            showDialog("createFailure", handlerWeakReference);
+                            showDialog("createFailure");
                         }
                     }
                 }
             }else {
-                showDialog("createFailure", handlerWeakReference);
+                showDialog("createFailure");
             }
         }
     }
 
-    public static void showDialog(String type, final WeakReference<Context> weakReference) {
+    public static void showDialog(String type) {
         final Context dialogContext = weakReference.get();
         final AlertDialog.Builder builder = new AlertDialog.Builder(dialogContext);
         builder.setIcon(android.R.drawable.ic_dialog_info)
@@ -174,7 +167,16 @@ public class OrderDetailActivity extends AppCompatActivity {
                     .setPositiveButton(dialogContext.getString(R.string.menu_confirm),
                             new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+                                public void onClick(DialogInterface dialogInterface, int index) {
+                                    for (int i = 0 ; i < MainActivity.orderList.size(); i++){
+                                        MainOrder order = MainActivity.orderList.get(i);
+                                        if (order.getOrderId().equals(mainOrder.getOrderId())){
+                                            mainOrder = order;
+                                            Log.e("sucdess?", "yes");
+                                            break;
+                                        }
+                                    }
+                                    setLayout();
                                     allowBack = true;
                                     orderCreated = false;
                                     alertDialog.dismiss();

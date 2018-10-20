@@ -107,7 +107,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         boolean flag = false;
                         try {
                             JSONObject jsObj = ja.getJSONObject(i);
-//                            Log.e("jsObj", jsObj.toString());
+                            Log.e("jsObj", jsObj.toString());
                             String orderId = jsObj.optString("orderId");
                             String productName = jsObj.optString("productName");
                             String quantity = jsObj.optString("quantity");
@@ -122,6 +122,10 @@ public class WelcomeActivity extends AppCompatActivity {
                                     indexOrder.getSumprice().add(sumprice);
                                     flag = true;
                                     index++;
+                                    if (index + orderList.size() +
+                                            orderFinishList.size()  == ja.length()) {
+                                        setActivity();
+                                    }
                                     break;
                                 }
                             }
@@ -134,12 +138,12 @@ public class WelcomeActivity extends AppCompatActivity {
                                     indexOrder.getSumprice().add(sumprice);
                                     flag = true;
                                     index++;
+                                    if (index + orderList.size() +
+                                        orderFinishList.size()  == ja.length()) {
+                                       setActivity();
+                                    }
                                     break;
                                 }
-                            }
-                            if (index + orderList.size() +
-                                    orderFinishList.size()  == ja.length()) {
-                                setActivity();
                             }
                             if (flag)
                                 continue;
@@ -172,17 +176,21 @@ public class WelcomeActivity extends AppCompatActivity {
                             mainOrder.getProductName().add(productName);
                             mainOrder.getQuantity().add(quantity);
                             mainOrder.getSumprice().add(sumprice);
-
-                                if (mainOrder.getPayCheck() == 4)
-                                    orderFinishList.add(mainOrder);
-                                else
-                                    orderList.add(mainOrder);
+                            if (mainOrder.getPayCheck() == 4)
+                                orderFinishList.add(mainOrder);
+                            else
+                                orderList.add(mainOrder);
                         } catch (JSONException e) {
                             Log.e("JSON ERROR", e.toString());
                         }
                     }
+                    if (index + orderList.size() +
+                            orderFinishList.size()  == ja.length()) {
+                        setActivity();
+                    }
                 }
             }
+            Log.e("index", index + "," + orderList.size() + "," + orderFinishList.size());
             if (ja == null) {
                 setActivity();
             }else if (from.equals("WelcomeActivity") && !phpDB.getState()){
@@ -216,13 +224,25 @@ public class WelcomeActivity extends AppCompatActivity {
                     ((Activity) context).finish();
                     break;
                 case "OrderDetailActivity":
-                    OrderDetailActivity.setLayout();
+                    OrderDetailActivity.showDialog("createFinish");
                     break;
                 case "OrderListFragment":
                     OrderListFragment.refreshOrder();
                     break;
                 case "OrderFinishListFragment":
                     OrderFinishFragment.refreshOrder();
+                    break;
+                case "MainActivity":
+                    OrderDetailActivity.loadingDialog.closeDialog();
+                    OrderListFragment.refreshOrder();
+                    OrderFinishFragment.refreshOrder();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            //延遲100毫秒避免畫面更新異常
+                            getOrderData("OrderListFragment");
+                        }
+                    }, 100);
                     break;
                 default:
                     break;
